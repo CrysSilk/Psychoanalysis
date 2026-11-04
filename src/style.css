@@ -22,6 +22,10 @@ html {
   scroll-behavior: smooth;
 }
 
+section[id] {
+  scroll-margin-top: 82px;
+}
+
 body {
   min-width: 320px;
   background: var(--background);
@@ -152,6 +156,15 @@ button {
   font-size: 13px;
 }
 
+.hero-button:hover {
+  background: #7c3aed;
+}
+
+.hero-button span {
+  font-size: 16px;
+  line-height: 1;
+}
+
 .hero-bottom {
   position: absolute;
   bottom: 35px;
@@ -253,6 +266,10 @@ button {
 .theory-detail p {
   color: var(--muted);
   line-height: 2;
+}
+
+.personality-section {
+  background: var(--background);
 }
 
 .footer {

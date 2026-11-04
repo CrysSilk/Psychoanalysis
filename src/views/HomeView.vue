@@ -3,6 +3,7 @@ import AppNavbar from '../components/AppNavbar.vue'
 import HeroSection from '../components/HeroSection.vue'
 import IntroductionSection from '../components/IntroductionSection.vue'
 import TheorySection from '../components/TheorySection.vue'
+import PersonalitySection from '../components/PersonalitySection.vue'
 import AppFooter from '../components/AppFooter.vue'
 </script>
 
@@ -14,6 +15,7 @@ import AppFooter from '../components/AppFooter.vue'
       <HeroSection />
       <IntroductionSection />
       <TheorySection />
+      <PersonalitySection />
     </main>
 
     <AppFooter />
