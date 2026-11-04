@@ -11,7 +11,7 @@ function selectDream(dream) {
 </script>
 
 <template>
-  <section class="dream-lab">
+  <section id="dream" class="dream-lab">
     <h2>梦境实验室</h2>
     <p class="notice">
       以下解析仅为精神分析理论视角下的解释示例，不构成对个人心理状态的判断。
