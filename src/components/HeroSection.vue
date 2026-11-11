@@ -1,32 +1,19 @@
 <template>
   <section id="home" class="hero">
-    <div class="hero-background"></div>
+    <div class="hero-background" aria-hidden="true"></div>
 
     <div class="hero-content">
-      <span class="eyebrow">
-        THE WORLD BENEATH CONSCIOUSNESS
-      </span>
-
-      <h1>
-        潜意识<br />
-        <span>之境</span>
-      </h1>
-
-      <p>
-        探索意识的边界，窥见隐藏于心灵深处的真实。
-        <br />
-        一场关于自我、欲望与无意识的精神旅程。
-      </p>
-
-      <a href="#introduction" class="hero-button">
-        探索内心世界
-        <span>→</span>
+      <p class="eyebrow">PSYCHOANALYSIS · 01</p>
+      <h1>意识之下，<br /><span>潜意识之中。</span></h1>
+      <p>从精神分析的视角，探索欲望、记忆与人格如何塑造我们。</p>
+      <a class="hero-button" href="#introduction">
+        开始探索 <span aria-hidden="true">↓</span>
       </a>
     </div>
 
-    <div class="hero-bottom">
-      <span>01 / INTRODUCTION</span>
-      <span>SCROLL TO EXPLORE ↓</span>
+    <div class="hero-bottom" aria-hidden="true">
+      <span>SCROLL TO EXPLORE</span>
+      <span>01 / 04</span>
     </div>
   </section>
 </template>
