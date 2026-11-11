@@ -12,8 +12,6 @@ const navItems = [
   { name: '理论', target: '#theories' },
   { name: '发展史', target: '#timeline' },
   { name: '梦境', target: '#dream' },
-  { name: '发展史', target: '#timeline' },
-  { name: '梦境', target: '#dream' },
   { name: '人格结构', target: '#personality' }
 ]
 

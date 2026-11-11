@@ -3,7 +3,7 @@ import { dreamSymbols } from '../data/dreams.js'
 </script>
 
 <template>
-  <section class="dream-lab">
+  <section id="dream" class="dream-lab">
     <div class="lab-header">
       <span class="section-tag">DREAM LAB</span>
       <h2>梦境实验室</h2>

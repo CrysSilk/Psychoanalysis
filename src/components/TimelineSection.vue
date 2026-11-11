@@ -12,7 +12,7 @@ function toggle(id) {
 </script>
 
 <template>
-  <section class="timeline">
+  <section id="timeline" class="timeline">
     <div class="timeline-header">
       <span class="section-tag">TIMELINE</span>
       <h2>精神分析发展史</h2>
