@@ -13,6 +13,11 @@ function toggle(id) {
 
 <template>
   <section class="timeline">
+    <!-- 流星装饰 -->
+    <span class="meteor" style="--d: 0s; --x: 12%; --y: 8%"></span>
+    <span class="meteor" style="--d: 2.8s; --x: 55%; --y: 4%"></span>
+    <span class="meteor" style="--d: 5.2s; --x: 80%; --y: 16%"></span>
+
     <div class="timeline-header">
       <span class="section-tag">TIMELINE</span>
       <h2>精神分析发展史</h2>
@@ -81,15 +86,46 @@ function toggle(id) {
   animation: twinkle 4s ease-in-out infinite alternate;
 }
 
-/* 弥散星云光晕 */
+/* 弥散星云光晕（带缓慢漂移） */
 .timeline::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 400px 250px at 15% 10%, rgba(124, 108, 240, 0.12), transparent 70%),
-    radial-gradient(ellipse 350px 250px at 85% 85%, rgba(124, 108, 240, 0.1), transparent 70%);
+    radial-gradient(ellipse 400px 250px at 15% 10%, rgba(124, 108, 240, 0.14), transparent 70%),
+    radial-gradient(ellipse 350px 250px at 85% 85%, rgba(124, 108, 240, 0.12), transparent 70%),
+    radial-gradient(ellipse 500px 300px at 50% 55%, rgba(63, 58, 140, 0.16), transparent 75%);
+  animation: nebula 16s ease-in-out infinite alternate;
+}
+
+/* 星云呼吸式膨胀收缩 */
+@keyframes nebula {
+  from { transform: scale(1); }
+  to   { transform: scale(1.1); }
+}
+
+/* ===== 流星 ===== */
+.meteor {
+  position: absolute;
+  top: var(--y, 10%);
+  left: var(--x, 20%);
+  width: 130px;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9));
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  animation: meteor 7s linear infinite;
+  animation-delay: var(--d, 0s);
+}
+
+/* 流星：短暂亮起 + 斜向划过 + 消失，循环 */
+@keyframes meteor {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(-32deg); }
+  4%   { opacity: 1; }
+  16%  { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
+  100% { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
 }
 
 /* 星星闪烁 */

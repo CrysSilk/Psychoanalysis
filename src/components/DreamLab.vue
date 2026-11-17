@@ -4,6 +4,13 @@ import { dreamSymbols } from '../data/dreams.js'
 
 <template>
   <section class="dream-lab">
+    <!-- 流星装饰 -->
+    <span class="meteor" style="--d: 1.4s; --x: 18%; --y: 6%"></span>
+    <span class="meteor" style="--d: 4.6s; --x: 70%; --y: 12%"></span>
+
+    <!-- 月亮装饰 -->
+    <span class="moon"></span>
+
     <div class="lab-header">
       <span class="section-tag">DREAM LAB</span>
       <h2>梦境实验室</h2>
@@ -67,15 +74,61 @@ import { dreamSymbols } from '../data/dreams.js'
   animation: twinkle 4s ease-in-out infinite alternate;
 }
 
-/* 弥散星云光晕 */
+/* 弥散星云光晕（带缓慢漂移） */
 .dream-lab::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 400px 250px at 80% 12%, rgba(124, 108, 240, 0.12), transparent 70%),
-    radial-gradient(ellipse 350px 250px at 10% 80%, rgba(124, 108, 240, 0.1), transparent 70%);
+    radial-gradient(ellipse 400px 250px at 80% 12%, rgba(124, 108, 240, 0.14), transparent 70%),
+    radial-gradient(ellipse 350px 250px at 10% 80%, rgba(124, 108, 240, 0.12), transparent 70%),
+    radial-gradient(ellipse 500px 300px at 45% 45%, rgba(63, 58, 140, 0.16), transparent 75%);
+  animation: nebula 16s ease-in-out infinite alternate;
+}
+
+/* 星云呼吸式膨胀收缩 */
+@keyframes nebula {
+  from { transform: scale(1); }
+  to   { transform: scale(1.1); }
+}
+
+/* ===== 月亮 ===== */
+.moon {
+  position: absolute;
+  top: 52px;
+  right: 70px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fdf6e3, #d8cf9e 60%, #b9b183);
+  box-shadow:
+    0 0 24px rgba(253, 246, 227, 0.35),
+    0 0 70px rgba(253, 246, 227, 0.15);
+  pointer-events: none;
+}
+
+/* ===== 流星 ===== */
+.meteor {
+  position: absolute;
+  top: var(--y, 10%);
+  left: var(--x, 20%);
+  width: 130px;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9));
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  animation: meteor 7s linear infinite;
+  animation-delay: var(--d, 0s);
+}
+
+/* 流星：短暂亮起 + 斜向划过 + 消失，循环 */
+@keyframes meteor {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(-32deg); }
+  4%   { opacity: 1; }
+  16%  { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
+  100% { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
 }
 
 @keyframes twinkle {
@@ -196,6 +249,14 @@ import { dreamSymbols } from '../data/dreams.js'
   .label {
     width: auto;
     padding: 2px 8px;
+  }
+
+  /* 窄屏时月亮缩小并贴边 */
+  .moon {
+    width: 36px;
+    height: 36px;
+    right: 30px;
+    top: 40px;
   }
 }
 </style>
