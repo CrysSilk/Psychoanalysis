@@ -67,6 +67,7 @@ import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
   max-width: 1080px;
   margin: 0 auto;
   padding: 60px 20px;
+  overflow-x: clip;
 }
 
 /* ===== 星空背景 ===== */

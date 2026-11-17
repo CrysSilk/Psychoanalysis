@@ -69,6 +69,7 @@ function toggle(id) {
   max-width: 1080px;
   margin: 0 auto;
   padding: 60px 20px;
+  overflow-x: clip;
 }
 
 /* ===== 星空背景（装饰层，不影响内容） ===== */

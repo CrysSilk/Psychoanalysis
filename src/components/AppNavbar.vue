@@ -1,47 +1,27 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { RouterLink } from 'vue-router'
 import { usePsychoStore } from '../stores/usePsychoStore'
 
 const store = usePsychoStore()
-
 const scrolled = ref(false)
 
 const navItems = [
-  { name: '首页', target: '#home' },
-  { name: '导言', target: '#introduction' },
-  { name: '理论', target: '#theories' },
-  { name: '发展史', target: '#timeline' },
-  { name: '梦境', target: '#dream' },
-  { name: '人格结构', target: '#personality' }
+  { name: '首页', to: '/' },
+  { name: '基础概念', to: '/guide' },
+  { name: '理论脉络', to: '/theories' },
+  { name: '人格结构', to: '/personality' },
+  { name: '梦境探索', to: '/dreams' },
+  { name: '参考资料', to: '/references' }
 ]
 
-const activeTarget = ref('#home')
-
-function updateActiveTarget() {
-  const pos = window.scrollY + 80          // 视口顶 + 导航栏高度附近
-  let current = '#home'
-  for (const item of navItems) {
-    const el = document.querySelector(item.target)
-    if (el && el.offsetTop <= pos) current = item.target
-  }
-  activeTarget.value = current
-}
-
 function handleScroll() {
-  scrolled.value = window.scrollY > 50
-  updateActiveTarget()
-}
-
-
-function toggleAudio() {
-  store.toggleAudio()
+  scrolled.value = window.scrollY > 24
 }
 
 onMounted(() => {
   handleScroll()
-  window.addEventListener('scroll', handleScroll, {
-    passive: true
-  })
+  window.addEventListener('scroll', handleScroll, { passive: true })
 })
 
 onUnmounted(() => {
@@ -50,36 +30,34 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header
-    class="navbar"
-    :class="{ scrolled }"
-  >
+  <header class="navbar" :class="{ scrolled }">
     <div class="nav-container">
-      <a href="#home" class="logo">
-        Realm of Unconscious
-      </a>
+      <RouterLink to="/" class="logo" aria-label="潜意识之境首页">
+        <span class="logo-mark" aria-hidden="true">◌</span>
+        <span>Realm <em>of</em> Unconscious</span>
+      </RouterLink>
 
-      <nav class="nav-links">
-        <a
-          v-for="item in navItems"
-          :key="item.target"
-          :href="item.target"
-          :class="{ active: item.target === activeTarget }"
+      <nav class="nav-links" aria-label="主导航">
+        <RouterLink
+          v-for="(item, index) in navItems"
+          :key="item.to"
+          :to="item.to"
+          :exact-active-class="index === 0 ? 'active' : ''"
+          active-class="active"
         >
           {{ item.name }}
-        </a>
+        </RouterLink>
       </nav>
 
       <button
-  class="audio-button"
-  :aria-pressed="store.audioPlaying"
-  @click="toggleAudio"
->
-  {{ store.audioPlaying ? '关闭音频' : '开启音频' }}
-</button>
-
-
-
+        class="audio-button"
+        type="button"
+        :aria-pressed="store.audioPlaying"
+        @click="store.toggleAudio"
+      >
+        <span class="audio-indicator" aria-hidden="true"></span>
+        {{ store.audioPlaying ? '音频已开启' : '静谧模式' }}
+      </button>
     </div>
   </header>
 </template>
@@ -87,86 +65,169 @@ onUnmounted(() => {
 <style scoped>
 .navbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  inset: 0 0 auto;
   z-index: 1000;
-  padding: 18px 24px;
-  transition: background 0.3s, box-shadow 0.3s;
+  padding: 0 32px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.08);
+  background: rgba(11, 15, 25, 0.66);
+  backdrop-filter: blur(16px);
+  transition: background 0.25s, box-shadow 0.25s;
 }
 
 .navbar.scrolled {
-  background: rgba(20, 20, 30, 0.94);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
+  background: rgba(11, 15, 25, 0.92);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
 }
 
 .nav-container {
-  max-width: 1200px;
-  margin: auto;
+  width: min(1200px, 100%);
+  min-height: 76px;
+  margin: 0 auto;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 28px;
 }
 
 .logo {
-  color: inherit;
-  text-decoration: none;
-  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #f0edff;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  letter-spacing: 0.04em;
   white-space: nowrap;
+}
+
+.logo em {
+  color: #9e95bd;
+  font-size: 0.86em;
+  font-weight: 400;
+}
+
+.logo-mark {
+  color: #b6a8ff;
+  font-family: Arial, sans-serif;
+  font-size: 29px;
+  line-height: 1;
 }
 
 .nav-links {
   display: flex;
-  gap: 24px;
+  align-items: center;
+  gap: clamp(14px, 2vw, 28px);
 }
 
 .nav-links a {
-  color: inherit;
-  text-decoration: none;
+  position: relative;
+  padding: 29px 0 26px;
+  color: #9ca3b5;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: color 0.2s;
 }
 
-.nav-links a:hover {
-  opacity: 0.65;
+.nav-links a::after {
+  position: absolute;
+  right: 0;
+  bottom: 18px;
+  left: 0;
+  height: 1px;
+  background: #b6a8ff;
+  content: '';
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s;
 }
+
+.nav-links a:hover,
 .nav-links a.active {
-  opacity: 1;
-  color: #b8a9ff;   /* 换成项目主题色 */
+  color: #eeeaff;
 }
 
+.nav-links a.active::after {
+  transform: scaleX(1);
+}
 
 .audio-button {
-  padding: 8px 14px;
-  border: 1px solid currentColor;
-  border-radius: 20px;
-  background: transparent;
-  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid rgba(182, 168, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(182, 168, 255, 0.06);
+  color: #c9c2e6;
+  font-size: 11px;
+  white-space: nowrap;
   cursor: pointer;
 }
 
-@media (max-width: 768px) {
+.audio-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8c82a8;
+}
+
+.audio-button[aria-pressed='true'] .audio-indicator {
+  background: #b6a8ff;
+  box-shadow: 0 0 10px #b6a8ff;
+}
+
+@media (max-width: 1050px) {
+  .navbar {
+    padding: 0 22px;
+  }
+
   .nav-container {
-    flex-wrap: wrap;
+    gap: 16px;
   }
 
   .nav-links {
-    order: 3;
-    width: 100%;
-    justify-content: center;
     gap: 14px;
+  }
+
+  .audio-button {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .navbar {
+    padding: 0 18px;
+  }
+
+  .nav-container {
+    min-height: 68px;
     flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .logo {
+    min-height: 64px;
+  }
+
+  .nav-links {
+    order: 2;
+    width: calc(100vw - 36px);
+    gap: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    padding: 10px 0 13px;
+    font-size: 13px;
+  }
+
+  .nav-links a::after {
+    bottom: 5px;
   }
 }
 </style>
-<style>
-/* 不带 scoped：这些 section 是别的组件渲染的，scoped 样式够不着 */
-section[id] {
-  scroll-margin-top: 72px;   /* 跳转锚点时给固定导航栏让出位置 */
-}
-
-html {
-  scroll-behavior: smooth;   /* 点链接平滑滚动而非瞬间跳 */
-}
-</style>
-
