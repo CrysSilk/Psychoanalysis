@@ -1,5 +1,5 @@
 <script setup>
-import { dreamSymbols } from '../data/dreams.js'
+import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
 </script>
 
 <template>
@@ -41,6 +41,21 @@ import { dreamSymbols } from '../data/dreams.js'
           </p>
         </div>
         <p class="tip">* 隐性内容为理论视角下的解释示例，不代表确定结论。</p>
+      </div>
+    </div>
+
+    <!-- 梦的改装机制：弗洛伊德归纳的四种方式 -->
+    <div class="mechanisms">
+      <h3 class="mech-title">梦的改装 · 四种机制</h3>
+      <div class="mech-grid">
+        <div
+          v-for="mech in dreamMechanisms"
+          :key="mech.name"
+          class="mech-card"
+        >
+          <h4>{{ mech.name }}</h4>
+          <p>{{ mech.desc }}</p>
+        </div>
       </div>
     </div>
   </section>
@@ -235,6 +250,54 @@ import { dreamSymbols } from '../data/dreams.js'
   margin: 0;
 }
 
+/* ===== 梦的改装机制区 ===== */
+.mechanisms {
+  position: relative;
+  z-index: 1;
+  margin-top: 40px;
+}
+
+.mech-title {
+  font-size: 18px;
+  color: #d8dcff;
+  text-shadow: 0 0 12px rgba(124, 108, 240, 0.4);
+  margin: 0 0 16px;
+}
+
+.mech-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);  /* 桌面端 4 列 */
+  gap: 16px;
+}
+
+/* 机制小卡片 */
+.mech-card {
+  background: rgba(26, 31, 53, 0.85);
+  border: 1px solid rgba(124, 108, 240, 0.4);
+  border-radius: 10px;
+  padding: 16px;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+/* 悬停：上浮 + 光晕 */
+.mech-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 22px rgba(124, 108, 240, 0.3);
+}
+
+.mech-card h4 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #b9afff;
+}
+
+.mech-card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #8a8fa3;
+}
+
 /* 窄屏适配：手机上改回单列 */
 @media (max-width: 700px) {
   .dream-grid {
@@ -257,6 +320,27 @@ import { dreamSymbols } from '../data/dreams.js'
     height: 36px;
     right: 30px;
     top: 40px;
+  }
+
+  /* 机制卡片：平板 2 列，手机 1 列 */
+  .mech-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .mech-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 尊重系统的"减少动态效果"设置（无障碍） */
+@media (prefers-reduced-motion: reduce) {
+  .dream-lab::before,
+  .dream-lab::after,
+  .meteor,
+  .moon {
+    animation: none;
   }
 }
 </style>

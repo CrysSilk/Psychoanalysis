@@ -2,12 +2,16 @@
 import { ref } from 'vue'
 import { theories } from '../data/theories.js'
 
-// 当前选中的理论节点（null 表示没选中）
-const selectedId = ref(null)
+// 已展开的节点集合（允许多个卡片同时展开）
+const openIds = ref([])
 
+// 没展开就展开，已展开就单独收起
 function toggle(id) {
-  // 再点一次同一个节点就收起
-  selectedId.value = selectedId.value === id ? null : id
+  if (openIds.value.includes(id)) {
+    openIds.value = openIds.value.filter(item => item !== id)
+  } else {
+    openIds.value.push(id)
+  }
 }
 </script>
 
@@ -32,7 +36,7 @@ function toggle(id) {
         class="timeline-item"
       >
         <!-- 轨道上的圆点 -->
-        <span class="dot" :class="{ active: selectedId === item.id }"></span>
+        <span class="dot" :class="{ active: openIds.includes(item.id) }"></span>
 
         <!-- 时间节点：点击切换展开/收起 -->
         <button class="node" @click="toggle(item.id)">
@@ -41,14 +45,15 @@ function toggle(id) {
           <span class="school">{{ item.school }}</span>
         </button>
 
-        <!-- 选中才显示的理论卡片，带展开过渡 -->
+        <!-- 展开的理论卡片，带展开过渡 -->
         <Transition name="expand">
-          <div v-if="selectedId === item.id" class="card">
+          <div v-if="openIds.includes(item.id)" class="card">
             <div class="card-head">
               <h3>{{ item.name }} · {{ item.school }}</h3>
               <span class="theory-tag">核心理论</span>
             </div>
             <p class="theory">{{ item.coreTheory }}</p>
+            <p class="quote">“{{ item.quote }}”</p>
             <p class="intro">{{ item.intro }}</p>
             <p class="ref">参考资料：{{ item.reference }}</p>
           </div>
@@ -159,31 +164,57 @@ function toggle(id) {
   color: #8a8fa3;
 }
 
-/* 时间轴轨道 */
+/* 时间轴轨道：桌面端中轴线 + 左右交错 */
 .timeline-track {
   position: relative;
   z-index: 1;
-  border-left: 2px solid rgba(124, 108, 240, 0.3);
-  margin-left: 6px;
+}
+
+/* 中轴线（带上下渐隐） */
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(124, 108, 240, 0.55), rgba(124, 108, 240, 0.12));
 }
 
 .timeline-item {
   position: relative;
-  padding-left: 32px;
-  margin-bottom: 12px;
+  width: calc(50% - 36px);   /* 每个节点占半边，留出中轴间距 */
+  margin-bottom: 16px;
 }
 
-/* 圆点 */
+/* 奇数项靠左 */
+.timeline-item:nth-child(odd) {
+  margin-right: auto;
+}
+
+/* 偶数项靠右 */
+.timeline-item:nth-child(even) {
+  margin-left: auto;
+}
+
+/* 圆点：奇数项（左侧）贴中轴线 */
 .dot {
   position: absolute;
-  left: -7px;
   top: 16px;
+  right: -30px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
   background: #1a1f35;
   border: 2px solid #7c6cf0;
   transition: all 0.3s;
+}
+
+/* 偶数项（右侧）圆点贴中轴线另一侧 */
+.timeline-item:nth-child(even) .dot {
+  right: auto;
+  left: -30px;
 }
 
 /* 鼠标悬停节点时圆点发亮 */
@@ -307,6 +338,16 @@ function toggle(id) {
   margin: 0 0 8px;
 }
 
+/* 名言：斜体 + 左侧装饰线 */
+.quote {
+  font-style: italic;
+  color: #b9afff;
+  border-left: 3px solid rgba(124, 108, 240, 0.6);
+  padding-left: 12px;
+  margin: 0 0 10px;
+  line-height: 1.6;
+}
+
 .intro {
   line-height: 1.7;
   margin: 0 0 8px;
@@ -330,8 +371,27 @@ function toggle(id) {
   transform: translateY(-6px);
 }
 
-/* 窄屏适配 */
-@media (max-width: 600px) {
+/* 窄屏适配：回退单列左轨布局 */
+@media (max-width: 700px) {
+  /* 中轴线移到左侧 */
+  .timeline-track::before {
+    left: 6px;
+    transform: none;
+  }
+
+  .timeline-item {
+    width: 100%;
+    padding-left: 32px;
+    margin-bottom: 12px;
+  }
+
+  /* 圆点统一贴左侧轨道 */
+  .dot,
+  .timeline-item:nth-child(even) .dot {
+    right: auto;
+    left: 0;
+  }
+
   .node {
     flex-direction: column;
     gap: 4px;
@@ -339,6 +399,16 @@ function toggle(id) {
 
   .era {
     min-width: auto;
+  }
+}
+
+/* 尊重系统的"减少动态效果"设置（无障碍） */
+@media (prefers-reduced-motion: reduce) {
+  .timeline::before,
+  .timeline::after,
+  .meteor,
+  .dot.active {
+    animation: none;
   }
 }
 </style>

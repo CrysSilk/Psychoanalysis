@@ -6,6 +6,7 @@ import TheorySection from '../components/TheorySection.vue'
 import TimelineSection from '../components/TimelineSection.vue'
 import DreamLab from '../components/DreamLab.vue'
 import PersonalitySection from '../components/PersonalitySection.vue'
+import ReferenceSection from '../components/ReferenceSection.vue'
 import AppFooter from '../components/AppFooter.vue'
 </script>
 
@@ -20,6 +21,7 @@ import AppFooter from '../components/AppFooter.vue'
       <TimelineSection />
       <DreamLab />
       <PersonalitySection />
+      <ReferenceSection />
     </main>
 
     <AppFooter />
