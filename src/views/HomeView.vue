@@ -8,6 +8,7 @@ import DreamLab from '../components/DreamLab.vue'
 import PersonalitySection from '../components/PersonalitySection.vue'
 import ReferenceSection from '../components/ReferenceSection.vue'
 import AppFooter from '../components/AppFooter.vue'
+
 </script>
 
 <template>

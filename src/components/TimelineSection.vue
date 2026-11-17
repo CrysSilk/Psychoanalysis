@@ -16,7 +16,7 @@ function toggle(id) {
 </script>
 
 <template>
-  <section class="timeline">
+  <section id="timeline" class="timeline">
     <!-- 流星装饰 -->
     <span class="meteor" style="--d: 0s; --x: 12%; --y: 8%"></span>
     <span class="meteor" style="--d: 2.8s; --x: 55%; --y: 4%"></span>

@@ -3,7 +3,7 @@ import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
 </script>
 
 <template>
-  <section class="dream-lab">
+  <section id="dream" class="dream-lab">
     <!-- 流星装饰 -->
     <span class="meteor" style="--d: 1.4s; --x: 18%; --y: 6%"></span>
     <span class="meteor" style="--d: 4.6s; --x: 70%; --y: 12%"></span>
