@@ -1,9 +1,16 @@
 <script setup>
-import { dreamSymbols } from '../data/dreams.js'
+import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
 </script>
 
 <template>
   <section id="dream" class="dream-lab">
+    <!-- 流星装饰 -->
+    <span class="meteor" style="--d: 1.4s; --x: 18%; --y: 6%"></span>
+    <span class="meteor" style="--d: 4.6s; --x: 70%; --y: 12%"></span>
+
+    <!-- 月亮装饰 -->
+    <span class="moon"></span>
+
     <div class="lab-header">
       <span class="section-tag">DREAM LAB</span>
       <h2>梦境实验室</h2>
@@ -34,6 +41,21 @@ import { dreamSymbols } from '../data/dreams.js'
           </p>
         </div>
         <p class="tip">* 隐性内容为理论视角下的解释示例，不代表确定结论。</p>
+      </div>
+    </div>
+
+    <!-- 梦的改装机制：弗洛伊德归纳的四种方式 -->
+    <div class="mechanisms">
+      <h3 class="mech-title">梦的改装 · 四种机制</h3>
+      <div class="mech-grid">
+        <div
+          v-for="mech in dreamMechanisms"
+          :key="mech.name"
+          class="mech-card"
+        >
+          <h4>{{ mech.name }}</h4>
+          <p>{{ mech.desc }}</p>
+        </div>
       </div>
     </div>
   </section>
@@ -67,15 +89,61 @@ import { dreamSymbols } from '../data/dreams.js'
   animation: twinkle 4s ease-in-out infinite alternate;
 }
 
-/* 弥散星云光晕 */
+/* 弥散星云光晕（带缓慢漂移） */
 .dream-lab::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 400px 250px at 80% 12%, rgba(124, 108, 240, 0.12), transparent 70%),
-    radial-gradient(ellipse 350px 250px at 10% 80%, rgba(124, 108, 240, 0.1), transparent 70%);
+    radial-gradient(ellipse 400px 250px at 80% 12%, rgba(124, 108, 240, 0.14), transparent 70%),
+    radial-gradient(ellipse 350px 250px at 10% 80%, rgba(124, 108, 240, 0.12), transparent 70%),
+    radial-gradient(ellipse 500px 300px at 45% 45%, rgba(63, 58, 140, 0.16), transparent 75%);
+  animation: nebula 16s ease-in-out infinite alternate;
+}
+
+/* 星云呼吸式膨胀收缩 */
+@keyframes nebula {
+  from { transform: scale(1); }
+  to   { transform: scale(1.1); }
+}
+
+/* ===== 月亮 ===== */
+.moon {
+  position: absolute;
+  top: 52px;
+  right: 70px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fdf6e3, #d8cf9e 60%, #b9b183);
+  box-shadow:
+    0 0 24px rgba(253, 246, 227, 0.35),
+    0 0 70px rgba(253, 246, 227, 0.15);
+  pointer-events: none;
+}
+
+/* ===== 流星 ===== */
+.meteor {
+  position: absolute;
+  top: var(--y, 10%);
+  left: var(--x, 20%);
+  width: 130px;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9));
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  animation: meteor 7s linear infinite;
+  animation-delay: var(--d, 0s);
+}
+
+/* 流星：短暂亮起 + 斜向划过 + 消失，循环 */
+@keyframes meteor {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(-32deg); }
+  4%   { opacity: 1; }
+  16%  { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
+  100% { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
 }
 
 @keyframes twinkle {
@@ -182,6 +250,54 @@ import { dreamSymbols } from '../data/dreams.js'
   margin: 0;
 }
 
+/* ===== 梦的改装机制区 ===== */
+.mechanisms {
+  position: relative;
+  z-index: 1;
+  margin-top: 40px;
+}
+
+.mech-title {
+  font-size: 18px;
+  color: #d8dcff;
+  text-shadow: 0 0 12px rgba(124, 108, 240, 0.4);
+  margin: 0 0 16px;
+}
+
+.mech-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);  /* 桌面端 4 列 */
+  gap: 16px;
+}
+
+/* 机制小卡片 */
+.mech-card {
+  background: rgba(26, 31, 53, 0.85);
+  border: 1px solid rgba(124, 108, 240, 0.4);
+  border-radius: 10px;
+  padding: 16px;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+/* 悬停：上浮 + 光晕 */
+.mech-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 22px rgba(124, 108, 240, 0.3);
+}
+
+.mech-card h4 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #b9afff;
+}
+
+.mech-card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #8a8fa3;
+}
+
 /* 窄屏适配：手机上改回单列 */
 @media (max-width: 700px) {
   .dream-grid {
@@ -196,6 +312,35 @@ import { dreamSymbols } from '../data/dreams.js'
   .label {
     width: auto;
     padding: 2px 8px;
+  }
+
+  /* 窄屏时月亮缩小并贴边 */
+  .moon {
+    width: 36px;
+    height: 36px;
+    right: 30px;
+    top: 40px;
+  }
+
+  /* 机制卡片：平板 2 列，手机 1 列 */
+  .mech-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .mech-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 尊重系统的"减少动态效果"设置（无障碍） */
+@media (prefers-reduced-motion: reduce) {
+  .dream-lab::before,
+  .dream-lab::after,
+  .meteor,
+  .moon {
+    animation: none;
   }
 }
 </style>
