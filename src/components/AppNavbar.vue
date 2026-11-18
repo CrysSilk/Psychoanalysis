@@ -5,6 +5,8 @@ import { usePsychoStore } from '../stores/usePsychoStore'
 
 const store = usePsychoStore()
 const scrolled = ref(false)
+const audioEl = ref(null)
+
 
 const navItems = [
   { name: '首页', to: '/' },
@@ -18,10 +20,27 @@ const navItems = [
 function handleScroll() {
   scrolled.value = window.scrollY > 24
 }
+function toggleAudio() {
+  store.toggleAudio()
+
+  const audio = audioEl.value
+  if (!audio) return
+
+  if (store.audioPlaying) {
+    audio.play().catch((e) => {
+      console.error('播放失败：', e)
+      store.setAudioPlaying(false)
+    })
+  } else {
+    audio.pause()
+  }
+
+}
 
 onMounted(() => {
   handleScroll()
   window.addEventListener('scroll', handleScroll, { passive: true })
+  if (audioEl.value) audioEl.value.volume = 0.4
 })
 
 onUnmounted(() => {
@@ -53,12 +72,14 @@ onUnmounted(() => {
         class="audio-button"
         type="button"
         :aria-pressed="store.audioPlaying"
-        @click="store.toggleAudio"
+        @click="toggleAudio"
       >
         <span class="audio-indicator" aria-hidden="true"></span>
         {{ store.audioPlaying ? '音频已开启' : '静谧模式' }}
       </button>
     </div>
+    <audio ref="audioEl" src="/audio/ambient.mp3" loop preload="none" />
+
   </header>
 </template>
 
