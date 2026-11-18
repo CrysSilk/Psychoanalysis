@@ -10,19 +10,7 @@ import { RouterLink } from 'vue-router'
       <p>
         一个探索潜意识、人格结构与梦境理论的心理学科普项目
       </p>
-            <div class="references">
-        <h3>站内相关内容</h3>
-
-        <ul>
-          <li><RouterLink to="/theories">理论时间轴</RouterLink></li>
-          <li><RouterLink to="/personality">人格三元结构</RouterLink></li>
-          <li><RouterLink to="/dreams">梦境实验室</RouterLink></li>
-          <li><RouterLink to="/references">参考资料与说明</RouterLink></li>
-        </ul>
-      </div>
-
-
-
+      
       <div class="copyright">
         © 2026 Realm of Unconscious
       </div>
