@@ -1,3 +1,7 @@
+<script setup>
+import { RouterLink } from 'vue-router'
+</script>
+
 <template>
   <footer class="footer">
     <div class="footer-content">
@@ -6,6 +10,18 @@
       <p>
         一个探索潜意识、人格结构与梦境理论的心理学科普项目
       </p>
+            <div class="references">
+        <h3>站内相关内容</h3>
+
+        <ul>
+          <li><RouterLink to="/theories">理论时间轴</RouterLink></li>
+          <li><RouterLink to="/personality">人格三元结构</RouterLink></li>
+          <li><RouterLink to="/dreams">梦境实验室</RouterLink></li>
+          <li><RouterLink to="/references">参考资料与说明</RouterLink></li>
+        </ul>
+      </div>
+
+
 
       <div class="copyright">
         © 2026 Realm of Unconscious
@@ -35,6 +51,39 @@
 .footer-content > p {
   margin: 8px 0 0;
 }
+.references {
+  margin-top: 32px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  text-align: left;
+  line-height: 1.8;
+}
+
+.references h3 {
+  text-align: center;
+}
+
+.references ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.references li {
+  margin: 8px 0;
+  color: #bbb;
+}
+
+.references a {
+  color: #a78bfa;
+  text-decoration: none;
+}
+
+.references a:hover {
+  text-decoration: underline;
+}
+
 
 .copyright {
   margin-top: 16px;
