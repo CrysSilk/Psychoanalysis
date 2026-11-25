@@ -17,18 +17,19 @@ const references = [
 </script>
 
 <template>
-  <section class="references">
+  <section class="references page-width">
     <div class="ref-header">
       <span class="section-tag">REFERENCES</span>
       <h2>参考资料</h2>
     </div>
 
     <ul class="ref-list">
-      <li v-for="ref in references" :key="ref.title">
-        <span class="ref-title">{{ ref.title }}</span>
-        <span class="ref-author">{{ ref.author }}</span>
-        <span v-if="ref.year" class="ref-year">{{ ref.year }}</span>
-        <span v-else-if="ref.note" class="ref-year">{{ ref.note }}</span>
+      <li v-for="(refItem, index) in references" :key="refItem.title">
+        <span class="ref-index">0{{ index + 1 }}</span>
+        <span class="ref-title">{{ refItem.title }}</span>
+        <span class="ref-author">{{ refItem.author }}</span>
+        <span v-if="refItem.year" class="ref-year">{{ refItem.year }}</span>
+        <span v-else-if="refItem.note" class="ref-year">{{ refItem.note }}</span>
       </li>
     </ul>
 
@@ -42,20 +43,7 @@ const references = [
 <style scoped>
 .references {
   position: relative;
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 60px 20px;
-}
-
-/* 星云光晕（与其他区块呼应，营造氛围） */
-.references::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 400px 250px at 20% 80%, rgba(124, 108, 240, 0.12), transparent 70%),
-    radial-gradient(ellipse 350px 250px at 85% 15%, rgba(124, 108, 240, 0.1), transparent 70%);
+  padding: 16px 0 90px;
 }
 
 .ref-header {
@@ -66,79 +54,94 @@ const references = [
 
 .section-tag {
   font-size: 12px;
-  letter-spacing: 3px;
-  color: #7c6cf0;
-  text-shadow: 0 0 8px rgba(124, 108, 240, 0.8);
+  letter-spacing: 0.2em;
+  color: var(--purple);
 }
 
 .ref-header h2 {
-  margin: 8px 0;
-  font-size: 28px;
-  text-shadow: 0 0 20px rgba(124, 108, 240, 0.4);
+  margin: 10px 0 0;
+  color: #f0eef8;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(28px, 3.8vw, 38px);
+  font-weight: 400;
 }
 
 .ref-list {
   position: relative;
   z-index: 1;
   list-style: none;
-  margin: 0 0 24px;
-  padding: 0;
+  margin: 0 0 28px;
+  padding: 6px 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
 }
 
 .ref-list li {
   display: flex;
   align-items: baseline;
   gap: 16px;
-  padding: 10px 14px;
-  border-bottom: 1px dashed rgba(124, 108, 240, 0.25);
-  transition: background 0.3s;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+  transition: background 0.2s;
+}
+
+.ref-list li:last-child {
+  border-bottom: 0;
 }
 
 .ref-list li:hover {
-  background: rgba(124, 108, 240, 0.08);
+  background: rgba(169, 154, 244, 0.08);
+}
+
+.ref-index {
+  flex-shrink: 0;
+  color: var(--purple-soft);
+  font-size: 12px;
+  letter-spacing: 0.12em;
 }
 
 .ref-title {
-  font-weight: bold;
-  color: #d8dcff;
+  font-weight: 600;
+  color: #ebe8f7;
+  font-size: 15px;
 }
 
 .ref-author {
-  color: #8a8fa3;
+  color: #9ba1b3;
   font-size: 14px;
 }
 
 .ref-year {
   margin-left: auto;
   font-size: 13px;
-  color: #6b7080;
+  color: #7c8399;
 }
 
 .disclaimer {
   position: relative;
   z-index: 1;
-  font-size: 13px;
-  color: #6b7080;
-  line-height: 1.7;
-  border-left: 3px solid rgba(124, 108, 240, 0.4);
-  padding-left: 12px;
+  font-size: 13.5px;
+  color: #8c92a5;
+  line-height: 1.8;
+  border: 1px solid var(--line);
+  border-left: 2px solid rgba(182, 168, 255, 0.55);
+  border-radius: var(--radius-sm);
+  background: var(--surface-glass);
+  padding: 16px 20px;
+  margin: 0;
 }
 
 @media (max-width: 600px) {
   .ref-list li {
     flex-direction: column;
     gap: 4px;
+    padding: 14px 18px;
   }
 
   .ref-year {
     margin-left: 0;
-  }
-}
-
-/* 尊重系统的"减少动态效果"设置（无障碍） */
-@media (prefers-reduced-motion: reduce) {
-  .references::after {
-    animation: none;
   }
 }
 </style>

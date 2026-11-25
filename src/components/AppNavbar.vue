@@ -72,10 +72,11 @@ onUnmounted(() => {
         class="audio-button"
         type="button"
         :aria-pressed="store.audioPlaying"
+        :aria-label="store.audioPlaying ? '关闭环境音频' : '开启环境音频'"
         @click="toggleAudio"
       >
         <span class="audio-indicator" aria-hidden="true"></span>
-        {{ store.audioPlaying ? '音频已开启' : '静谧模式' }}
+        <span class="audio-label">{{ store.audioPlaying ? '音频已开启' : '静谧模式' }}</span>
       </button>
     </div>
     <audio ref="audioEl" src="/audio/ambient.mp3" loop preload="none" />
@@ -175,14 +176,21 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 12px;
-  border: 1px solid rgba(182, 168, 255, 0.3);
+  padding: 8px 13px;
+  border: 1px solid rgba(182, 168, 255, 0.28);
   border-radius: 999px;
   background: rgba(182, 168, 255, 0.06);
   color: #c9c2e6;
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
   cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.audio-button:hover {
+  border-color: rgba(182, 168, 255, 0.55);
+  background: rgba(182, 168, 255, 0.14);
+  color: #eeeaff;
 }
 
 .audio-indicator {
@@ -190,6 +198,7 @@ onUnmounted(() => {
   height: 6px;
   border-radius: 50%;
   background: #8c82a8;
+  transition: background 0.2s, box-shadow 0.2s;
 }
 
 .audio-button[aria-pressed='true'] .audio-indicator {
@@ -211,7 +220,8 @@ onUnmounted(() => {
   }
 
   .audio-button {
-    display: none;
+    padding: 7px 11px;
+    font-size: 11px;
   }
 }
 

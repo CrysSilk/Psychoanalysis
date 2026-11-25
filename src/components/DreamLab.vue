@@ -1,15 +1,25 @@
 <script setup>
+import { computed, ref } from 'vue'
 import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
+
+const activeFilter = ref('全部')
+const filters = ['全部', '象征化', '移置', '凝缩']
+
+const filteredDreams = computed(() =>
+  activeFilter.value === '全部'
+    ? dreamSymbols
+    : dreamSymbols.filter((dream) => dream.mechanism === activeFilter.value)
+)
 </script>
 
 <template>
-  <section id="dream" class="dream-lab">
+  <section id="dream" class="dream-lab page-width">
     <!-- 流星装饰 -->
     <span class="meteor" style="--d: 1.4s; --x: 18%; --y: 6%"></span>
     <span class="meteor" style="--d: 4.6s; --x: 70%; --y: 12%"></span>
 
     <!-- 月亮装饰 -->
-    <span class="moon"></span>
+    <span class="moon" aria-hidden="true"></span>
 
     <div class="lab-header">
       <span class="section-tag">DREAM LAB</span>
@@ -17,12 +27,26 @@ import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
       <p class="notice">
         以下解析仅为精神分析理论视角下的解释示例，不构成对个人心理状态的判断。
       </p>
+
+      <div class="filter-bar" role="group" aria-label="按梦的改装机制筛选">
+        <button
+          v-for="filter in filters"
+          :key="filter"
+          type="button"
+          class="filter-pill"
+          :class="{ active: activeFilter === filter }"
+          :aria-pressed="activeFilter === filter"
+          @click="activeFilter = filter"
+        >
+          {{ filter }}
+        </button>
+      </div>
     </div>
 
     <!-- 两列网格：每行左右各一张示例卡片，向下排列 -->
     <div class="dream-grid">
       <div
-        v-for="dream in dreamSymbols"
+        v-for="dream in filteredDreams"
         :key="dream.id"
         class="result"
       >
@@ -64,63 +88,22 @@ import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
 <style scoped>
 .dream-lab {
   position: relative;
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 60px 20px;
+  padding: 20px 0 90px;
   overflow-x: clip;
-}
-
-/* ===== 星空背景 ===== */
-.dream-lab::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1px 1px at 18% 22%, rgba(255, 255, 255, 0.9) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 42% 10%, rgba(185, 175, 255, 0.8) 50%, transparent 51%),
-    radial-gradient(1px 1px at 65% 35%, rgba(255, 255, 255, 0.7) 50%, transparent 51%),
-    radial-gradient(2px 2px at 88% 20%, rgba(255, 255, 255, 0.85) 50%, transparent 51%),
-    radial-gradient(1px 1px at 75% 55%, rgba(185, 175, 255, 0.7) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 30% 70%, rgba(255, 255, 255, 0.6) 50%, transparent 51%),
-    radial-gradient(1px 1px at 50% 90%, rgba(255, 255, 255, 0.75) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 8% 55%, rgba(185, 175, 255, 0.65) 50%, transparent 51%),
-    radial-gradient(1px 1px at 92% 80%, rgba(255, 255, 255, 0.7) 50%, transparent 51%),
-    radial-gradient(1px 1px at 60% 5%, rgba(255, 255, 255, 0.65) 50%, transparent 51%);
-  animation: twinkle 4s ease-in-out infinite alternate;
-}
-
-/* 弥散星云光晕（带缓慢漂移） */
-.dream-lab::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 400px 250px at 80% 12%, rgba(124, 108, 240, 0.14), transparent 70%),
-    radial-gradient(ellipse 350px 250px at 10% 80%, rgba(124, 108, 240, 0.12), transparent 70%),
-    radial-gradient(ellipse 500px 300px at 45% 45%, rgba(63, 58, 140, 0.16), transparent 75%);
-  animation: nebula 16s ease-in-out infinite alternate;
-}
-
-/* 星云呼吸式膨胀收缩 */
-@keyframes nebula {
-  from { transform: scale(1); }
-  to   { transform: scale(1.1); }
 }
 
 /* ===== 月亮 ===== */
 .moon {
   position: absolute;
-  top: 52px;
-  right: 70px;
-  width: 54px;
-  height: 54px;
+  top: 24px;
+  right: 28px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #fdf6e3, #d8cf9e 60%, #b9b183);
   box-shadow:
-    0 0 24px rgba(253, 246, 227, 0.35),
-    0 0 70px rgba(253, 246, 227, 0.15);
+    0 0 24px rgba(253, 246, 227, 0.3),
+    0 0 64px rgba(253, 246, 227, 0.14);
   pointer-events: none;
 }
 
@@ -129,27 +112,22 @@ import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
   position: absolute;
   top: var(--y, 10%);
   left: var(--x, 20%);
-  width: 130px;
+  width: 120px;
   height: 1.5px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9));
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(214, 204, 255, 0.78));
   border-radius: 999px;
   opacity: 0;
   pointer-events: none;
-  animation: meteor 7s linear infinite;
+  animation: meteor 8s linear infinite;
   animation-delay: var(--d, 0s);
 }
 
 /* 流星：短暂亮起 + 斜向划过 + 消失，循环 */
 @keyframes meteor {
   0%   { opacity: 0; transform: translate(0, 0) rotate(-32deg); }
-  4%   { opacity: 1; }
-  16%  { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
-  100% { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
-}
-
-@keyframes twinkle {
-  from { opacity: 0.4; }
-  to   { opacity: 1; }
+  4%   { opacity: 0.85; }
+  16%  { opacity: 0; transform: translate(220px, 140px) rotate(-32deg); }
+  100% { opacity: 0; transform: translate(220px, 140px) rotate(-32deg); }
 }
 
 /* 标题区 */
@@ -161,20 +139,51 @@ import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
 
 .section-tag {
   font-size: 12px;
-  letter-spacing: 3px;
-  color: #7c6cf0;
-  text-shadow: 0 0 8px rgba(124, 108, 240, 0.8);
+  letter-spacing: 0.2em;
+  color: var(--purple);
 }
 
 .lab-header h2 {
-  margin: 8px 0;
-  font-size: 28px;
-  text-shadow: 0 0 20px rgba(124, 108, 240, 0.4);
+  margin: 10px 0 8px;
+  color: #f0eef8;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(28px, 3.8vw, 38px);
+  font-weight: 400;
 }
 
 .notice {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.filter-pill {
+  padding: 6px 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(20, 25, 40, 0.6);
+  color: #9da3b5;
   font-size: 13px;
-  color: #8a8fa3;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.filter-pill:hover {
+  border-color: var(--line-strong);
+  color: #ece9f8;
+}
+
+.filter-pill.active {
+  border-color: rgba(182, 168, 255, 0.65);
+  background: rgba(169, 154, 244, 0.16);
+  color: #f0eef8;
 }
 
 /* ===== 两列网格：每行 2 张卡片，占满宽度，向下排列 ===== */
@@ -182,47 +191,52 @@ import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;  /* 左右各占一半 */
-  gap: 20px;                        /* 卡片之间的间距 */
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
 }
 
 /* 示例卡片 */
 .result {
-  background: rgba(26, 31, 53, 0.85);
-  border: 1px solid rgba(124, 108, 240, 0.45);
-  border-radius: 10px;
-  padding: 22px 24px;
-  box-shadow:
-    0 0 24px rgba(124, 108, 240, 0.18),
-    inset 0 0 30px rgba(124, 108, 240, 0.05);
-  transition: box-shadow 0.3s, transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 24px 26px;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
 
-/* 悬停卡片：轻微上浮 + 光晕加强 */
 .result:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 34px rgba(124, 108, 240, 0.32),
-    inset 0 0 30px rgba(124, 108, 240, 0.08);
+  border-color: var(--line-strong);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(10, 12, 24, 0.38), 0 0 22px rgba(169, 154, 244, 0.12);
 }
 
 .result-head {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   margin-bottom: 16px;
 }
 
 .result-head h3 {
   margin: 0;
+  color: #f0eef8;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 400;
 }
 
 /* 机制标签 */
 .mechanism-tag {
+  flex-shrink: 0;
   font-size: 12px;
-  color: #b9afff;
-  background: rgba(124, 108, 240, 0.25);
-  border-radius: 12px;
+  color: var(--purple-soft);
+  border: 1px solid rgba(182, 168, 255, 0.3);
+  background: rgba(169, 154, 244, 0.12);
+  border-radius: 999px;
   padding: 3px 12px;
 }
 
@@ -231,72 +245,79 @@ import { dreamSymbols, dreamMechanisms } from '../data/dreams.js'
   align-items: baseline;
   gap: 12px;
   margin: 0 0 12px;
-  line-height: 1.7;
+  color: #b4bac9;
+  font-size: 14px;
+  line-height: 1.75;
 }
 
 .label {
   flex-shrink: 0;
-  width: 76px;
+  width: 72px;
   text-align: center;
   font-size: 12px;
-  color: #b9afff;
-  border: 1px solid rgba(124, 108, 240, 0.4);
+  color: var(--purple-soft);
+  border: 1px solid rgba(182, 168, 255, 0.3);
   border-radius: 4px;
   padding: 2px 0;
 }
 
 .tip {
+  margin-top: auto;
+  padding-top: 6px;
   font-size: 12px;
-  color: #6b7080;
-  margin: 0;
+  color: #747b91;
+  margin-bottom: 0;
 }
 
 /* ===== 梦的改装机制区 ===== */
 .mechanisms {
   position: relative;
   z-index: 1;
-  margin-top: 40px;
+  margin-top: 48px;
 }
 
 .mech-title {
-  font-size: 18px;
-  color: #d8dcff;
-  text-shadow: 0 0 12px rgba(124, 108, 240, 0.4);
-  margin: 0 0 16px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: #ebe8f7;
+  margin: 0 0 18px;
 }
 
 .mech-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);  /* 桌面端 4 列 */
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 
 /* 机制小卡片 */
 .mech-card {
-  background: rgba(26, 31, 53, 0.85);
-  border: 1px solid rgba(124, 108, 240, 0.4);
-  border-radius: 10px;
-  padding: 16px;
-  transition: box-shadow 0.3s, transform 0.3s;
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
 
-/* 悬停：上浮 + 光晕 */
 .mech-card:hover {
+  border-color: var(--line-strong);
   transform: translateY(-3px);
-  box-shadow: 0 0 22px rgba(124, 108, 240, 0.3);
+  box-shadow: 0 12px 24px rgba(10, 12, 24, 0.34);
 }
 
 .mech-card h4 {
   margin: 0 0 8px;
-  font-size: 15px;
-  color: #b9afff;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--purple-soft);
 }
 
 .mech-card p {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
-  color: #8a8fa3;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #9ba1b3;
 }
 
 /* 窄屏适配：手机上改回单列 */

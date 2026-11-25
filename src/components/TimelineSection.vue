@@ -39,10 +39,16 @@ function toggle(id) {
         <span class="dot" :class="{ active: openIds.includes(item.id) }"></span>
 
         <!-- 时间节点：点击切换展开/收起 -->
-        <button class="node" @click="toggle(item.id)">
+        <button
+          class="node"
+          type="button"
+          :aria-expanded="openIds.includes(item.id)"
+          @click="toggle(item.id)"
+        >
           <span class="era">{{ item.era }}</span>
           <span class="name">{{ item.name }}</span>
           <span class="school">{{ item.school }}</span>
+          <span class="toggle-icon" aria-hidden="true">{{ openIds.includes(item.id) ? '−' : '+' }}</span>
         </button>
 
         <!-- 展开的理论卡片，带展开过渡 -->
@@ -66,49 +72,8 @@ function toggle(id) {
 <style scoped>
 .timeline {
   position: relative;
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 60px 20px;
+  padding: 40px 0 20px;
   overflow-x: clip;
-}
-
-/* ===== 星空背景（装饰层，不影响内容） ===== */
-.timeline::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.9) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 35% 8%, rgba(185, 175, 255, 0.8) 50%, transparent 51%),
-    radial-gradient(1px 1px at 58% 30%, rgba(255, 255, 255, 0.7) 50%, transparent 51%),
-    radial-gradient(2px 2px at 82% 15%, rgba(255, 255, 255, 0.85) 50%, transparent 51%),
-    radial-gradient(1px 1px at 90% 45%, rgba(185, 175, 255, 0.7) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 22% 60%, rgba(255, 255, 255, 0.6) 50%, transparent 51%),
-    radial-gradient(1px 1px at 45% 80%, rgba(255, 255, 255, 0.75) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 70% 70%, rgba(185, 175, 255, 0.65) 50%, transparent 51%),
-    radial-gradient(1px 1px at 8% 88%, rgba(255, 255, 255, 0.6) 50%, transparent 51%),
-    radial-gradient(1px 1px at 95% 90%, rgba(255, 255, 255, 0.7) 50%, transparent 51%);
-  animation: twinkle 4s ease-in-out infinite alternate;
-}
-
-/* 弥散星云光晕（带缓慢漂移） */
-.timeline::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 400px 250px at 15% 10%, rgba(124, 108, 240, 0.14), transparent 70%),
-    radial-gradient(ellipse 350px 250px at 85% 85%, rgba(124, 108, 240, 0.12), transparent 70%),
-    radial-gradient(ellipse 500px 300px at 50% 55%, rgba(63, 58, 140, 0.16), transparent 75%);
-  animation: nebula 16s ease-in-out infinite alternate;
-}
-
-/* 星云呼吸式膨胀收缩 */
-@keyframes nebula {
-  from { transform: scale(1); }
-  to   { transform: scale(1.1); }
 }
 
 /* ===== 流星 ===== */
@@ -116,28 +81,22 @@ function toggle(id) {
   position: absolute;
   top: var(--y, 10%);
   left: var(--x, 20%);
-  width: 130px;
+  width: 120px;
   height: 1.5px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9));
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(214, 204, 255, 0.78));
   border-radius: 999px;
   opacity: 0;
   pointer-events: none;
-  animation: meteor 7s linear infinite;
+  animation: meteor 8s linear infinite;
   animation-delay: var(--d, 0s);
 }
 
 /* 流星：短暂亮起 + 斜向划过 + 消失，循环 */
 @keyframes meteor {
   0%   { opacity: 0; transform: translate(0, 0) rotate(-32deg); }
-  4%   { opacity: 1; }
-  16%  { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
-  100% { opacity: 0; transform: translate(240px, 150px) rotate(-32deg); }
-}
-
-/* 星星闪烁 */
-@keyframes twinkle {
-  from { opacity: 0.4; }
-  to   { opacity: 1; }
+  4%   { opacity: 0.85; }
+  16%  { opacity: 0; transform: translate(220px, 140px) rotate(-32deg); }
+  100% { opacity: 0; transform: translate(220px, 140px) rotate(-32deg); }
 }
 
 /* 标题区 */
@@ -149,20 +108,22 @@ function toggle(id) {
 
 .section-tag {
   font-size: 12px;
-  letter-spacing: 3px;
-  color: #7c6cf0;
-  text-shadow: 0 0 8px rgba(124, 108, 240, 0.8);
+  letter-spacing: 0.2em;
+  color: var(--purple);
 }
 
 .timeline-header h2 {
-  margin: 8px 0;
-  font-size: 28px;
-  text-shadow: 0 0 20px rgba(124, 108, 240, 0.4);
+  margin: 10px 0 8px;
+  color: #f0eef8;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(28px, 3.8vw, 38px);
+  font-weight: 400;
 }
 
 .section-desc {
+  margin: 0;
   font-size: 14px;
-  color: #8a8fa3;
+  color: var(--muted);
 }
 
 /* 时间轴轨道：桌面端中轴线 + 左右交错 */
@@ -178,15 +139,15 @@ function toggle(id) {
   left: 50%;
   top: 0;
   bottom: 0;
-  width: 2px;
+  width: 1px;
   transform: translateX(-50%);
-  background: linear-gradient(180deg, rgba(124, 108, 240, 0.55), rgba(124, 108, 240, 0.12));
+  background: linear-gradient(180deg, rgba(182, 168, 255, 0.5), rgba(182, 168, 255, 0.1));
 }
 
 .timeline-item {
   position: relative;
   width: calc(50% - 36px);   /* 每个节点占半边，留出中轴间距 */
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 /* 奇数项靠左 */
@@ -202,161 +163,161 @@ function toggle(id) {
 /* 圆点：奇数项（左侧）贴中轴线 */
 .dot {
   position: absolute;
-  top: 16px;
-  right: -30px;
+  top: 18px;
+  right: -42px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #1a1f35;
-  border: 2px solid #7c6cf0;
-  transition: all 0.3s;
+  background: #14192a;
+  border: 2px solid var(--purple);
+  transition: all 0.25s;
 }
 
 /* 偶数项（右侧）圆点贴中轴线另一侧 */
 .timeline-item:nth-child(even) .dot {
   right: auto;
-  left: -30px;
+  left: -42px;
 }
 
 /* 鼠标悬停节点时圆点发亮 */
 .timeline-item:hover .dot {
-  background: #7c6cf0;
-  box-shadow: 0 0 10px rgba(124, 108, 240, 0.8);
+  background: var(--purple-soft);
+  box-shadow: 0 0 12px rgba(182, 168, 255, 0.75);
 }
 
 /* 选中圆点：脉冲光环 */
 .dot.active {
-  background: #7c6cf0;
-  animation: pulse 1.6s ease-out infinite;
+  background: var(--purple-soft);
+  animation: pulse 1.8s ease-out infinite;
 }
 
 @keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(124, 108, 240, 0.6); }
-  70%  { box-shadow: 0 0 0 12px rgba(124, 108, 240, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(124, 108, 240, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(182, 168, 255, 0.55); }
+  70%  { box-shadow: 0 0 0 11px rgba(182, 168, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(182, 168, 255, 0); }
 }
 
 /* 节点按钮 */
 .node {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: baseline;
   width: 100%;
-  background: none;
-  border: none;
-  border-radius: 8px;
+  background: rgba(20, 25, 40, 0.45);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   color: inherit;
-  font-size: 16px;
+  font-size: 15px;
+  text-align: left;
   cursor: pointer;
-  padding: 12px 14px;
-  transition: all 0.3s ease;
+  padding: 13px 16px;
+  transition: border-color 0.25s, background 0.25s, transform 0.25s;
 }
 
-/* 悬停：整体右移 + 背景亮起 */
 .node:hover {
-  background: rgba(124, 108, 240, 0.1);
-  transform: translateX(6px);
+  border-color: var(--line-strong);
+  background: rgba(169, 154, 244, 0.1);
+  transform: translateX(4px);
 }
 
-/* 按下：轻微缩小，产生"按下去"的手感 */
 .node:active {
-  transform: translateX(6px) scale(0.98);
-}
-
-/* 键盘选中时的轮廓（无障碍） */
-.node:focus-visible {
-  outline: 1px solid #7c6cf0;
-  outline-offset: 2px;
-}
-
-/* 悬停时文字发光 */
-.node:hover .era {
-  text-shadow: 0 0 10px rgba(124, 108, 240, 0.9);
-}
-
-.node:hover .name {
-  text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+  transform: translateX(4px) scale(0.99);
 }
 
 .era {
-  color: #7c6cf0;
-  font-weight: bold;
-  min-width: 110px;   /* 对齐时间 */
+  color: var(--purple-soft);
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 96px;
 }
 
 .name {
-  font-weight: bold;
+  color: #f0eef8;
+  font-weight: 600;
 }
 
 .school {
-  font-size: 14px;
-  color: #8a8fa3;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.toggle-icon {
+  margin-left: auto;
+  color: var(--purple-soft);
+  font-size: 16px;
+  line-height: 1;
 }
 
 /* 理论卡片 */
 .card {
-  background: rgba(26, 31, 53, 0.85);
-  border: 1px solid rgba(124, 108, 240, 0.45);
-  border-radius: 10px;
-  padding: 18px 20px;
-  margin: 8px 0 16px;
-  box-shadow:
-    0 0 20px rgba(124, 108, 240, 0.15),
-    inset 0 0 30px rgba(124, 108, 240, 0.05);
-  transition: box-shadow 0.3s, transform 0.3s;
+  background: var(--surface-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(182, 168, 255, 0.35);
+  border-radius: var(--radius-md);
+  padding: 20px 22px;
+  margin: 10px 0 16px;
+  box-shadow: 0 12px 28px rgba(8, 10, 20, 0.35);
+  transition: border-color 0.25s, transform 0.25s;
 }
 
-/* 悬停卡片：轻微上浮 + 光晕加强 */
 .card:hover {
+  border-color: rgba(182, 168, 255, 0.55);
   transform: translateY(-2px);
-  box-shadow:
-    0 0 30px rgba(124, 108, 240, 0.3),
-    inset 0 0 30px rgba(124, 108, 240, 0.08);
 }
 
 .card-head {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   margin-bottom: 12px;
 }
 
 .card-head h3 {
   margin: 0;
+  color: #f0eef8;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-weight: 400;
 }
 
 .theory-tag {
   flex-shrink: 0;
-  font-size: 12px;
-  color: #b9afff;
-  border: 1px solid rgba(124, 108, 240, 0.4);
-  border-radius: 4px;
-  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--purple-soft);
+  border: 1px solid rgba(182, 168, 255, 0.35);
+  border-radius: 999px;
+  padding: 2px 10px;
 }
 
 .theory {
-  color: #d8dcff;
-  margin: 0 0 8px;
+  color: #e4e1f5;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 10px;
 }
 
 /* 名言：斜体 + 左侧装饰线 */
 .quote {
   font-style: italic;
-  color: #b9afff;
-  border-left: 3px solid rgba(124, 108, 240, 0.6);
+  color: #c6bcef;
+  font-size: 13.5px;
+  border-left: 2px solid rgba(182, 168, 255, 0.6);
   padding-left: 12px;
-  margin: 0 0 10px;
-  line-height: 1.6;
+  margin: 0 0 12px;
+  line-height: 1.65;
 }
 
 .intro {
-  line-height: 1.7;
-  margin: 0 0 8px;
+  color: #a9afbf;
+  font-size: 14px;
+  line-height: 1.75;
+  margin: 0 0 10px;
 }
 
 .ref {
-  font-size: 13px;
-  color: #999;
+  font-size: 12.5px;
+  color: #7c8399;
   margin: 0;
 }
 

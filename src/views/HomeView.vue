@@ -62,7 +62,7 @@ const explorations = [
       <div class="home-note">
         <span class="note-mark" aria-hidden="true">✦</span>
         <p>
-          精神分析是一种理解心理经验的理论视角。本站内容用于科普与学习交流，
+          精神分析是一种理解心理经验的理论视角。本站内容用于科普与学习交流，不构成任何心理诊断或医疗建议。
         </p>
         <RouterLink to="/references">查看参考资料与说明</RouterLink>
       </div>

@@ -22,4 +22,4 @@ docs/
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+*.sw

@@ -1,6 +1,8 @@
 <script setup>
+import { defineAsyncComponent } from 'vue'
 import { RouterLink } from 'vue-router'
-import GalaxyCanvas from './GalaxyCanvas.vue'
+
+const GalaxyCanvas = defineAsyncComponent(() => import('./GalaxyCanvas.vue'))
 </script>
 
 <template>

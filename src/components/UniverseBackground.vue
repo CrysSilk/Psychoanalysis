@@ -45,28 +45,32 @@ function draw(time = 0, delta = 0) {
     const twinkle = reducedMotion
       ? 0.52
       : 0.28 + (Math.sin(time * particle.twinkleSpeed + particle.phase) + 1) * 0.27
-    const color = particle.violet ? '190, 174, 255' : '224, 231, 255'
 
+    context.globalAlpha = twinkle
+    context.fillStyle = particle.violet ? '#beaeff' : '#e0e7ff'
     context.beginPath()
-    context.fillStyle = `rgba(${color}, ${twinkle})`
     context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2)
     context.fill()
   }
 
   if (!reducedMotion) {
-    const connectionDistance = width < 600 ? 82 : 112
+    const connectionDistance = width < 600 ? 80 : 108
+    const maxDistSq = connectionDistance * connectionDistance
+    context.strokeStyle = '#aea0eb'
+    context.lineWidth = 0.6
+
     for (let i = 0; i < particles.length; i += 1) {
+      const first = particles[i]
       for (let j = i + 1; j < particles.length; j += 1) {
-        const first = particles[i]
         const second = particles[j]
         const distanceX = first.x - second.x
         const distanceY = first.y - second.y
-        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY)
+        const distSq = distanceX * distanceX + distanceY * distanceY
 
-        if (distance < connectionDistance) {
+        if (distSq < maxDistSq) {
+          const distance = Math.sqrt(distSq)
+          context.globalAlpha = (1 - distance / connectionDistance) * 0.09
           context.beginPath()
-          context.strokeStyle = `rgba(174, 160, 235, ${(1 - distance / connectionDistance) * 0.09})`
-          context.lineWidth = 0.6
           context.moveTo(first.x, first.y)
           context.lineTo(second.x, second.y)
           context.stroke()
@@ -74,6 +78,8 @@ function draw(time = 0, delta = 0) {
       }
     }
   }
+
+  context.globalAlpha = 1
 }
 
 function animate(time) {
@@ -110,7 +116,7 @@ function resizeCanvas() {
   context = element.getContext('2d')
   context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
 
-  const count = Math.max(34, Math.min(120, Math.round((width * height) / 14000)))
+  const count = Math.max(28, Math.min(82, Math.round((width * height) / 18000)))
   particles = Array.from({ length: count }, createParticle)
   draw()
   startAnimation()

@@ -34,11 +34,11 @@ const SPREAD_GROW = 0.75        // 越往外越发散
 const ARM_FRACTION = 0.62       // 跟随旋臂的粒子比例
 
 /* ---------------- 粒子数量 ---------------- */
-const STREAM_COUNT = 52000      // 意识流主体
-const CORE_COUNT = 6000         // 深层核心（本我）
-const MIST_COUNT = 3200         // 梦境迷雾（大而柔的光斑）
-const WISP_COUNT = 9000         // 外围思绪（意识边界的微光）
-const SPARK_COUNT = 240         // 思维火花（偶尔闪烁的亮点）
+const STREAM_COUNT = 36000      // 意识流主体
+const CORE_COUNT = 4500         // 深层核心（本我）
+const MIST_COUNT = 2200         // 梦境迷雾（大而柔的光斑）
+const WISP_COUNT = 6500         // 外围思绪（意识边界的微光）
+const SPARK_COUNT = 200         // 思维火花（偶尔闪烁的亮点）
 const GLOW_COUNT = 5            // 核心辉光层数
 
 /* ---------------- 视角与运动 ---------------- */
@@ -109,7 +109,8 @@ let animationFrame = 0
 let lastFrameTime = 0
 let startTime = 0
 let reducedMotion = false
-let resizeObserver, motionQuery
+let inViewport = true
+let resizeObserver, intersectionObserver, motionQuery
 
 /* ═════════════ 自定义着色器 ═════════════ */
 
@@ -184,13 +185,14 @@ function buildGeometry() {
   const phases = new Float32Array(total)
   let i = 0
 
-  const put = (x, y, z, color, s, a, ph) => {
-    positions[i * 3] = x
-    positions[i * 3 + 1] = y
-    positions[i * 3 + 2] = z
-    colors[i * 3] = color[0]
-    colors[i * 3 + 1] = color[1]
-    colors[i * 3 + 2] = color[2]
+  const put = (x, y, z, rColor, gColor, bColor, s, a, ph) => {
+    const i3 = i * 3
+    positions[i3] = x
+    positions[i3 + 1] = y
+    positions[i3 + 2] = z
+    colors[i3] = rColor
+    colors[i3 + 1] = gColor
+    colors[i3 + 2] = bColor
     sizes[i] = s
     alphas[i] = a
     phases[i] = ph
@@ -218,7 +220,9 @@ function buildGeometry() {
       Math.cos(theta) * rr,
       -Math.sin(theta) * rr,
       z,
-      [base[0] * shade, base[1] * shade, base[2] * shade],
+      base[0] * shade,
+      base[1] * shade,
+      base[2] * shade,
       bright ? 0.018 + rnd() * 0.012 : 0.005 + rnd() * 0.009,
       (bright ? 0.45 : 0.06 + rnd() * 0.22) *
         edgeFade(rr) *
@@ -242,7 +246,9 @@ function buildGeometry() {
       Math.cos(theta) * r,
       -Math.sin(theta) * r,
       gauss() * (0.08 + 0.1 * (1 - t)),
-      [c[0] / 255, c[1] / 255, c[2] / 255],
+      c[0] / 255,
+      c[1] / 255,
+      c[2] / 255,
       0.004 + rnd() * 0.008,
       (0.1 + rnd() * 0.2) * (1 - smooth(Math.min(1, r / 0.55))),
       phase
@@ -260,15 +266,14 @@ function buildGeometry() {
       ? armTheta(n % ARMS, r) + gauss() * spread(r) * 1.2
       : rnd() * TAU
     const isViolet = rnd() < 0.6
-    const color = isViolet
-      ? [170 / 255, 140 / 255, 255 / 255]
-      : [120 / 255, 150 / 255, 245 / 255]
     const phase = r * 2.0 + rnd() * TAU
     put(
       Math.cos(theta) * r,
       -Math.sin(theta) * r,
       gauss() * 0.03,
-      color,
+      isViolet ? 170 / 255 : 120 / 255,
+      isViolet ? 140 / 255 : 150 / 255,
+      isViolet ? 1 : 245 / 255,
       0.14 + rnd() * 0.2,
       (0.014 + rnd() * 0.024) *
         edgeFade(r) *
@@ -293,7 +298,9 @@ function buildGeometry() {
       Math.cos(theta) * r,
       -Math.sin(theta) * r,
       gauss() * 0.06,
-      color,
+      color[0],
+      color[1],
+      color[2],
       0.003 + rnd() * 0.006,
       (0.03 + rnd() * 0.08) * edgeFade(r),
       phase
@@ -313,7 +320,9 @@ function buildGeometry() {
       Math.cos(theta) * r,
       -Math.sin(theta) * r,
       gauss() * 0.03,
-      isRose ? [1, 0.6, 0.78] : [0.55, 0.78, 1],
+      isRose ? 1 : 0.55,
+      isRose ? 0.6 : 0.78,
+      isRose ? 0.78 : 1,
       0.008 + rnd() * 0.012,
       (0.2 + rnd() * 0.25) * edgeFade(r),
       phase
@@ -325,11 +334,11 @@ function buildGeometry() {
    *    多层叠加：外层紫晕 → 中层琥珀暖光 → 内核金色
    *    象征深藏的欲望与真相
    */
-  put(0, 0, 0, [160 / 255, 135 / 255, 255 / 255], 1.2, 0.025, 0)
-  put(0, 0, 0, [200 / 255, 160 / 255, 255 / 255], 0.8, 0.04, 0.5)
-  put(0, 0, 0, [255 / 255, 185 / 255, 155 / 255], 0.5, 0.06, 1.0)
-  put(0, 0, 0, [255 / 255, 210 / 255, 140 / 255], 0.3, 0.12, 1.5)
-  put(0, 0, 0, [255 / 255, 225 / 255, 180 / 255], 0.15, 0.18, 2.0)
+  put(0, 0, 0, 160 / 255, 135 / 255, 1, 1.2, 0.025, 0)
+  put(0, 0, 0, 200 / 255, 160 / 255, 1, 0.8, 0.04, 0.5)
+  put(0, 0, 0, 1, 185 / 255, 155 / 255, 0.5, 0.06, 1.0)
+  put(0, 0, 0, 1, 210 / 255, 140 / 255, 0.3, 0.12, 1.5)
+  put(0, 0, 0, 1, 225 / 255, 180 / 255, 0.15, 0.18, 2.0)
 
   const geo = new BufferGeometry()
   geo.setAttribute('position', new BufferAttribute(positions, 3))
@@ -392,7 +401,7 @@ function animate(time) {
   material.uniforms.uTime.value = elapsed
   render()
 
-  if (!reducedMotion && !document.hidden) {
+  if (!reducedMotion && !document.hidden && inViewport) {
     animationFrame = window.requestAnimationFrame(animate)
   } else {
     animationFrame = 0
@@ -408,7 +417,7 @@ function stopAnimation() {
 }
 
 function startAnimation() {
-  if (!reducedMotion && !document.hidden && !animationFrame) {
+  if (!reducedMotion && !document.hidden && inViewport && !animationFrame) {
     animationFrame = window.requestAnimationFrame(animate)
   }
 }
@@ -467,6 +476,17 @@ onMounted(() => {
 
   resizeObserver = new ResizeObserver(resize)
   resizeObserver.observe(canvas)
+  if ('IntersectionObserver' in window) {
+    intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        inViewport = entries[0]?.isIntersecting ?? true
+        if (inViewport) startAnimation()
+        else stopAnimation()
+      },
+      { threshold: 0.01 }
+    )
+    intersectionObserver.observe(canvas)
+  }
   motionQuery.addEventListener('change', handleMotionChange)
   document.addEventListener('visibilitychange', handleVisibilityChange)
   startAnimation()
@@ -475,6 +495,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   stopAnimation()
   resizeObserver?.disconnect()
+  intersectionObserver?.disconnect()
   motionQuery?.removeEventListener('change', handleMotionChange)
   document.removeEventListener('visibilitychange', handleVisibilityChange)
   geometry?.dispose()
