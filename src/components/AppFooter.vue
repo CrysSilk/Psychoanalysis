@@ -1,7 +1,3 @@
-<script setup>
-import { RouterLink } from 'vue-router'
-</script>
-
 <template>
   <footer class="footer">
     <div class="footer-content">
@@ -39,39 +35,6 @@ import { RouterLink } from 'vue-router'
 .footer-content > p {
   margin: 8px 0 0;
 }
-.references {
-  margin-top: 32px;
-  padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  text-align: left;
-  line-height: 1.8;
-}
-
-.references h3 {
-  text-align: center;
-}
-
-.references ul {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 16px;
-}
-
-.references li {
-  margin: 8px 0;
-  color: #bbb;
-}
-
-.references a {
-  color: #a78bfa;
-  text-decoration: none;
-}
-
-.references a:hover {
-  text-decoration: underline;
-}
-
 
 .copyright {
   margin-top: 16px;
