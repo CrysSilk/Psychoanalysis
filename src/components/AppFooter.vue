@@ -10,7 +10,6 @@ const footerLinks = [
   { name: '参考资料', to: '/references' }
 ]
 </script>
-
 <template>
   <footer class="footer">
     <div class="footer-content">
